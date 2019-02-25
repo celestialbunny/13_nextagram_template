@@ -1,0 +1,35 @@
+{% include "_layout.html" %}
+
+{% if current_user.is_anonymous %}
+{% else %}
+<!-- Blocks of posts -->
+	<div class="col-sm-12 col-md-6">
+		<div class="card">
+			<img class="card-img-top" src="../../../../static/image/saint_petersburg.jpg" alt="Saint Petersburg">
+			<div class="card-body">
+				<div class="d-flex justify-content-start status-container">
+					<div class="status">
+						<input type="checkbox" name="emoji" id="smile">
+						<label for="smile" class="icon icon-smile"></label>
+						<span>2</span>
+					</div>
+					<div class="status">
+						<input type="checkbox" name="emoji" id="shocked">
+						<label for="shocked" class="icon icon-shocked"></label>
+						<span>2</span>
+					</div>
+					<div class="status">
+						<input type="checkbox" name="emoji" id="sad">
+						<label for="sad" class="icon icon-sad"></label>
+						<span>2</span>
+					</div>
+				</div>
+				<div class="d-flex justify-content-between mt-2">
+					<div>Post.owner</div>
+					<div>Post.date</div>
+				</div>
+				<p>Post.description</p>
+			</div>
+		</div>
+	</div>
+{% endif %}

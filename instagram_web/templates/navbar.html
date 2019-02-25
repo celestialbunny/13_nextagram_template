@@ -1,0 +1,21 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+	{% if current_user.is_anonymous %}
+	<a class="navbar-brand" href="#">NEXTAGRAM</a>
+	{% else %}
+	<a class="navbar-brand" href="#">{{ current_user.username}} @ NEXTAGRAM</a>
+	{% endif %}
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+		<div class="navbar-nav">
+			<a class="nav-item nav-link active" href="{{ url_for('users.index') }}">Home <span class="sr-only">(current)</span></a>
+			{% if current_user.is_anonymous %}
+			<a class="nav-item nav-link" href="{{ url_for('users.display_register')}}">Register</a>
+			<a class="nav-item nav-link" href="{{ url_for('users.display_login') }}">Login</a>
+			{% else %}
+			<a class="nav-item nav-link" href="{{ url_for('users.logout') }}">Logout</a>
+			{% endif %}
+		</div>
+	</div>
+</nav>

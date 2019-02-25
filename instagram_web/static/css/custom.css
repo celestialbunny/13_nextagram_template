@@ -1,0 +1,16 @@
+input[type=checkbox]:checked,
+input[type=checkbox] {
+	display: none;
+}
+
+input[type="checkbox"]:checked + label[class^="icon"] {
+	color: orangered;
+}
+
+.status-container .status {
+	margin-left: 2em;
+}
+
+.status-container .status:first-of-type {
+	margin-left: 0;
+}
