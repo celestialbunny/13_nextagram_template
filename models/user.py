@@ -8,7 +8,6 @@ class User(UserMixin, BaseModel):
 	username = pw.CharField(unique=True, null=False)
 	email = pw.CharField(unique=True, null=False)
 	password = pw.CharField(unique=True, null=False)
-	post = pw.ForeignKeyField(Post, backref='author', unique=False, null=True)
 	image_file = pw.CharField(unique=False, null=True, default='default.jpg')
 
 	def validate_username(self, username):

@@ -14,6 +14,8 @@
 			<a class="nav-item nav-link" href="{{ url_for('users.display_register')}}">Register</a>
 			<a class="nav-item nav-link" href="{{ url_for('users.display_login') }}">Login</a>
 			{% else %}
+			<a class="nav-item nav-link" href="{{ url_for('posts.create_post') }}">Create Post</a>
+			<a class="nav-item nav-link" href="{{ url_for('users.display_update') }}">Update</a>
 			<a class="nav-item nav-link" href="{{ url_for('users.logout') }}">Logout</a>
 			{% endif %}
 		</div>

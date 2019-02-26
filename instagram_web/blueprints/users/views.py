@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template
+from flask import Blueprint
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 from peewee import IntegrityError
 
 # importing related to User & it's forms
@@ -9,20 +10,38 @@ from instagram_web.blueprints.users.forms import RegistrationForm, LoginForm, Up
 # Common import that shares with the posts.py
 from flask import render_template, redirect, url_for, flash, request, session, escape
 from flask_login import login_user, logout_user, login_required, current_user
+from app import app
 
+# import aws_s3 helper
+from instagram_web.util.s3_helper import upload_file_to_s3, random_file_name
 
 users_blueprint = Blueprint('users',
 							__name__,
 							template_folder='templates/users')
+
 
 def redirect_if_logged_in():
 	if current_user.is_authenticated:
 		flash("You have already been logged in", "warning")
 		return redirect(url_for('users.index'))
 
+"""Start of index"""
 @users_blueprint.route('/', methods=["GET"])
 def index():
 	return render_template('index.html')
+"""End of index"""
+
+"""
+Start of View User Profile
+"""
+@users_blueprint.route('/<int:userid>', methods=["GET"])
+def display_user(userid):
+	user = User.get_or_none(User.id == userid)
+	return render_template('user.html', user=user)
+"""
+End of View User Profile
+"""
+
 
 """
 Start of Register User
@@ -66,19 +85,85 @@ def log_user():
 	form = LoginForm()
 	next_page = request.args.get('next')
 	if form.validate_on_submit():
-		user = User.get_or_none(User.email == form.email.data)
-		password = check_password_hash(user.password, form.password.data)
-		if user and password:
-			login_user(user)
-			flash("You've been logged in!", "success")
-			if next_page:
-				return redirect(url_for(next_page))
+		user = User.get_or_none(User.email == form.data['email'])
+		breakpoint()
+		if user != None:
+			breakpoint()
+			password = check_password_hash(user.password, form.password.data)
+			if password:
+				breakpoint()
+				login_user(user)
+				flash("You've been logged in!", "success")
+				if next_page:
+					return redirect(url_for(next_page))
+				else:
+					return redirect(url_for('users.index'))
 			else:
-				return redirect(url_for('users.index'))
+				flash("Please recheck the password entered", "warning")
 		else:
-			flash("Login unsuccessful, Please check email and password", "danger")
+			flash("There is no account associated with the particular address", "danger")
+	else:
+		flash("Please recheck the login credentials", "warning")
 """
 End of Login User
+"""
+
+
+"""
+Start of Update User
+"""
+@users_blueprint.route('/update', methods=['GET'])
+def display_update():
+	form = UpdateDetailsForm()
+	form.username.data = current_user.username
+	form.email.data = current_user.email
+	return render_template('update.html', form=form, username=current_user.username, email=current_user.email)
+
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+def allowed_file(filename):
+	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+# temporarily allow posting of image
+# suppose to update profile
+@users_blueprint.route('/update', methods=['POST'])
+@login_required
+def update_user():
+	form = UpdateDetailsForm()
+	# A
+	if "picture" not in request.files:
+		return "No picture key in request.files"
+	# B
+	file = request.files['picture']
+	# C
+	if file.filename == '':
+		return "Please select a file"
+	# D
+	if file and allowed_file(file.filename):
+		file.filename = secure_filename(file.filename)
+		output = upload_file_to_s3(file, app.config['S3_BUCKET'])
+	else:
+		return redirect("/")
+	# try:
+	# 	updated_user = User(
+	# 		username=form.username.data,
+	# 		email=form.email.data,
+	# 		password=generate_password_hash(form.password.data),
+	# 		picture=output
+	# 	)
+	# except IntegrityError:
+	# 	flash('Duplication of either username or email', 'warning')
+	# else:
+	# 	# meant for the condition of success
+	# 	username_test = User.get_or_none(User.username == form.username.data)
+	# 	email_test = User.get_or_none(User.email == form.email.data)
+	# 	if username_test == None and email_test == None:
+	# 		updated_user.save() # does this create new or update??
+	# 		flash('Data saved', 'success')
+	# 	else:
+	# 		flash('Duplication of either username or email', 'warning')
+"""
+End of Update User
 """
 
 @users_blueprint.route('/logout')
