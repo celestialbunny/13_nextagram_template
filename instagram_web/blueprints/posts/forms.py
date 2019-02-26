@@ -1,14 +1,16 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, FileField, TextAreaField, SubmitField
+from flask_wtf.file import FileField, FileAllowed
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 
 class CreatePostForm(FlaskForm):
-	# image = FileField(
-	# 	'Image',
-	# 	validators=[
-	# 		DataRequired()
-	# 	]
-	# )
+	picture = FileField(
+		'Picture',
+		validators=[
+			DataRequired(),
+			FileAllowed(['jpg', 'png'])
+		]
+	)
 	title = StringField(
 		'Title',
 		validators=[

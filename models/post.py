@@ -4,6 +4,7 @@ from peewee import CharField, IntegerField, TextField, ForeignKeyField
 
 class Post(BaseModel):
 	user = ForeignKeyField(User, backref='author')
+	picture = CharField(unique=False, null=True)
 	title = CharField(unique=False, null=False)
 	content = TextField(unique=False, null=False)
 	status = IntegerField(unique=False, null=True)

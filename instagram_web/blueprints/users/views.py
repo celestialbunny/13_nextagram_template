@@ -2,9 +2,11 @@ from flask import Blueprint
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from peewee import IntegrityError
+from PIL import Image
 
 # importing related to User & it's forms
 from models.user import User
+from models.post import Post
 from instagram_web.blueprints.users.forms import RegistrationForm, LoginForm, UpdateDetailsForm
 
 # Common import that shares with the posts.py
@@ -28,7 +30,12 @@ def redirect_if_logged_in():
 """Start of index"""
 @users_blueprint.route('/', methods=["GET"])
 def index():
-	return render_template('index.html')
+	# 1. Search for all posts form current user
+	# 2. Search for all posts from followed user
+	# 3. Display all the posts from both sources, sorted by date desc
+	# Note * Temporarily retrieving from the current user
+	posts = Post.select()
+	return render_template('index.html', posts=posts)
 """End of index"""
 
 """
@@ -132,16 +139,26 @@ def update_user():
 	form = UpdateDetailsForm()
 	# A
 	if "picture" not in request.files:
-		return "No picture key in request.files"
+		flash("No picture key in request.files", 'danger')
+		return redirect(url_for('users.update_user'))
 	# B
 	file = request.files['picture']
 	# C
 	if file.filename == '':
-		return "Please select a file"
+		flash("Please select a file", 'danger')
+		return redirect(url_for('users.update_user'))
 	# D
 	if file and allowed_file(file.filename):
+		# output_size = (125, 125)
+		# file = Image.open(request.files['picture'])
+		# i = file.thumbnail(output_size)
 		file.filename = secure_filename(file.filename)
 		output = upload_file_to_s3(file, app.config['S3_BUCKET'])
+		print(output)
+		current_user.image_file = output
+		current_user.save()
+		flash('Data saved', 'success')
+		return redirect(url_for('users.index'))
 	else:
 		return redirect("/")
 	# try:
