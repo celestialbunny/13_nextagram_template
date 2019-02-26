@@ -1,5 +1,4 @@
 from models.base_model import BaseModel
-from models.post import Post
 import peewee as pw
 import datetime
 from flask_login import UserMixin

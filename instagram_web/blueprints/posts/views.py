@@ -23,9 +23,11 @@ def show_post():
 @login_required
 def create_post():
 	form = CreatePostForm()
+	user = current_user
 	if form.validate_on_submit():
 		try:
 			new_post = Post(
+				user=user.id,
 				title=form.title.data,
 				content=form.content.data
 			)
