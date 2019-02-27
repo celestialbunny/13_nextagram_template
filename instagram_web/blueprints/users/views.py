@@ -93,12 +93,9 @@ def log_user():
 	next_page = request.args.get('next')
 	if form.validate_on_submit():
 		user = User.get_or_none(User.email == form.data['email'])
-		breakpoint()
 		if user != None:
-			breakpoint()
 			password = check_password_hash(user.password, form.password.data)
 			if password:
-				breakpoint()
 				login_user(user)
 				flash("You've been logged in!", "success")
 				if next_page:
@@ -189,3 +186,4 @@ def logout():
 	logout_user()
 	flash("You've been logged out!", "success")
 	return redirect(url_for('users.index'))
+

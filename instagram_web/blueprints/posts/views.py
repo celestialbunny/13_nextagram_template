@@ -2,7 +2,7 @@ from flask import Blueprint
 from peewee import IntegrityError
 from werkzeug.utils import secure_filename
 
-# importing related to User & it's forms
+# importing related to Post & it's forms
 from models.post import Post
 from instagram_web.blueprints.posts.forms import CreatePostForm
 
@@ -61,7 +61,6 @@ def create_post():
 	else:
 		return redirect("/")
 	# End here
-	user = current_user
 
 @posts_blueprint.route('/post/<int:post_id>')
 def post(post_id):
