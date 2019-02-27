@@ -5,6 +5,9 @@ from flask_assets import Environment, Bundle
 from instagram_web.blueprints.users.views import users_blueprint
 from instagram_web.blueprints.posts.views import posts_blueprint
 from .util.assets import bundles
+import os
+from instagram_web.util.google_oauth import oauth
+import config
 
 from models.user import User
 from models.post import Post
@@ -15,6 +18,8 @@ assets.register(bundles)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'users.login'
+
+oauth.init_app(app)
 
 app.register_blueprint(users_blueprint, url_prefix="/users")
 app.register_blueprint(posts_blueprint, url_prefix="/posts")

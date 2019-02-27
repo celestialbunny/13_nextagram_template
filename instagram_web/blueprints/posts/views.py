@@ -6,12 +6,17 @@ from werkzeug.utils import secure_filename
 from models.post import Post
 from instagram_web.blueprints.posts.forms import CreatePostForm
 
+# importing related to Donation & it's forms
+from models.donation import Donation
+from instagram_web.blueprints.donations.forms import CreateDonateForm
+
 # Common import that shares with the posts.py
 from flask import render_template, redirect, url_for, flash, request, session, escape, abort
 from flask_login import login_user, logout_user, login_required, current_user
 from app import app
 
 from instagram_web.util.s3_helper import upload_file_to_s3, random_file_name
+# from instagram_web.util.gateway import gateway
 
 posts_blueprint = Blueprint('posts',
 							__name__,
@@ -62,12 +67,12 @@ def create_post():
 		return redirect("/")
 	# End here
 
-@posts_blueprint.route('/post/<int:post_id>')
+@posts_blueprint.route('/<int:post_id>')
 def post(post_id):
 	post = Post.get_or_none(Post.id == post_id)
-	return render_template('post.html', title=post.title, post=post)
+	return render_template('post.html', post=post)
 
-@posts_blueprint.route("/post/<int:post_id>/delete", methods=['POST'])
+@posts_blueprint.route("/<int:post_id>/delete", methods=['POST'])
 @login_required
 def delete_post(post_id):
 	post = Post.get_or_none(Post.id == post_id)
@@ -76,3 +81,24 @@ def delete_post(post_id):
 	# How to execute the delete command???
 	flash('Post has been deleted!', 'info')
 	return redirect(url_for('home'))
+
+
+"""
+Start of the donation section
+"""
+def generate_client_token():
+	return gateway.client_token.generate()
+
+def transact(options):
+	return gateway.transaction.sale(options)
+
+def find_transaction(id):
+	return gateway.transaction.find(id)
+
+@posts_blueprint.route('/post/<int:post_id>/donate')
+def view_donation():
+	form = CreateDonateForm()
+	return render_template('create_donation.html', form=form)
+
+
+

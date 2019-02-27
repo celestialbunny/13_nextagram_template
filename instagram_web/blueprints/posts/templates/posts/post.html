@@ -3,8 +3,7 @@
 {% block content %}
 
 <div class="card">
-	<img class="card-img-top" src="{{ post.picture }}"
-		alt="{{ post.picture }}">
+	<img class="card-img-top" src="{{ post.picture }}" alt="{{ post.picture }}">
 	<div class="card-body">
 		<div class="d-flex justify-content-start status-container">
 			<div class="status">
@@ -31,20 +30,42 @@
 		{% endif %}
 		<div class="user-details">
 			<div class="d-flex justify-content-between mt-2">
-				<div>{{ post.user_id.username }}</div>
+				<div>{{ post.user.username}}</div>
 				<div>{{ post.updated_at }}</div>
 			</div>
 			<h5>{{ post.title }}</h5>
 			<p>{{ post.content }}</p>
 		</div>
-		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteModal">
-			Delete
+
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#donateModal">
+			Donate
 		</button>
 	</div>
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal fade" id="donateModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<form id="payment-form" method="post" action="/checkouts">
+			<section>
+				<label for="amount">
+					<span class="input-label">Amount</span>
+					<div class="input-wrapper amount-wrapper">
+						<input id="amount" name="amount" type="tel" min="1" placeholder="Amount" value="10">
+					</div>
+				</label>
+
+				<div class="bt-drop-in-wrapper">
+					<div id="bt-dropin"></div>
+				</div>
+			</section>
+
+			<input type="hidden" id="nonce" name="payment_method_nonce" />
+			<button class="button" type="submit" id="submit-button"><span>Test Transaction</span></button>
+		</form>
+	</div>
+</div>
+<!-- <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -61,5 +82,5 @@
 			</div>
 		</div>
 	</div>
-</div>
+</div> -->
 {% endblock %}

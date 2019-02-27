@@ -1,10 +1,17 @@
 {% include "_layout.html" %}
 <div class="container">
-	{% extends "register_form.html" %}
-
+	{% include "register_form.html" %}
+	<div class="border-top py-3">
+		<div class="d-flex justify-content-between">
+			<a href="{{ url_for('users.google_login') }}" class="icon icon-google3"></a>
+			<a class="icon icon-github"></a>
+			<a class="icon icon-smile"></a>
+			<a class="icon icon-smile"></a>
+		</div>
+	</div>
 	<div class="border-top pt-3">
 		<small class="text-muted">
-			Already Have An Account? <a class="ml-2" href="{{ url_for('users.login') }}">Sign In</a>
+			Already Have An Account? <a class="ml-2" href="{{ url_for('users.display_login') }}">Sign In</a>
 		</small>
 	</div>
 </div>

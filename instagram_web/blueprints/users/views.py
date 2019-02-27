@@ -22,6 +22,30 @@ users_blueprint = Blueprint('users',
 							template_folder='templates/users')
 
 
+# OAuth sections
+from flask_dance.contrib.github import make_github_blueprint, github
+github_blueprint = make_github_blueprint(client_id='f2bbc19d909797496071', client_secret='3be3e6bd1126a19456e72a1d94882f855b6228f2')
+app.register_blueprint(github_blueprint, url_prefix='/github_login')
+
+@users_blueprint.route('/github')
+def github_login():
+	if not github.authorized:
+		return redirect(url_for('github.login'))
+
+	account_info = github.com.get('/user')
+
+	if account_info.ok:
+		account_info_json = account_info.json()
+		github_username = account_info_json['login']
+		flash("Login via Github is successful", 'success')
+		return redirect(url_for('users.index'))
+	flash('Error occured while logging in via Github', 'danger')
+	return redirect(url_for('users.index', username=github_username))
+	# github does not allow http -> https
+	# need to allow special permission 
+	# for linux: "export OAUTHLIB_INSECURE_TRANSPORT=1"
+	# for windows: "set OAUTHLIB_INSECURE_TRANSPORT=1"
+
 def redirect_if_logged_in():
 	if current_user.is_authenticated:
 		flash("You have already been logged in", "warning")
@@ -182,4 +206,3 @@ def logout():
 	logout_user()
 	flash("You've been logged out!", "success")
 	return redirect(url_for('users.index'))
-
