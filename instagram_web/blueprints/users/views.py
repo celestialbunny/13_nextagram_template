@@ -134,6 +134,8 @@ def allowed_file(filename):
 @login_required
 def update_user():
 	form = UpdateDetailsForm()
+	username_test = User.get_or_none(User.username == form.username.data)
+	email_test = User.get_or_none(User.email == form.email.data)
 	# A
 	if "picture" not in request.files:
 		flash("No picture key in request.files", 'danger')
@@ -146,36 +148,30 @@ def update_user():
 		return redirect(url_for('users.update_user'))
 	# D
 	if file and allowed_file(file.filename):
-		# output_size = (125, 125)
-		# file = Image.open(request.files['picture'])
-		# i = file.thumbnail(output_size)
 		file.filename = secure_filename(file.filename)
 		output = upload_file_to_s3(file, app.config['S3_BUCKET'])
-		print(output)
+		# print(output)
 		current_user.image_file = output
-		current_user.save()
-		flash('Data saved', 'success')
+		# current_user.save()
+		try:
+			updated_user = User(
+				username=form.username.data,
+				email=form.email.data,
+				password=generate_password_hash(form.password.data),
+				picture=output
+			)
+		except IntegrityError:
+			flash('Duplication of either username or email', 'warning')
+		else:
+			updated_user.save() # does this create new or update??
+			flash('Data saved', 'success')
+			# if username_test == None and email_test == None:
+			# else:
+			# 	flash('Duplication of either username or email', 'warning')
 		return redirect(url_for('users.index'))
 	else:
 		return redirect("/")
-	# try:
-	# 	updated_user = User(
-	# 		username=form.username.data,
-	# 		email=form.email.data,
-	# 		password=generate_password_hash(form.password.data),
-	# 		picture=output
-	# 	)
-	# except IntegrityError:
-	# 	flash('Duplication of either username or email', 'warning')
-	# else:
 	# 	# meant for the condition of success
-	# 	username_test = User.get_or_none(User.username == form.username.data)
-	# 	email_test = User.get_or_none(User.email == form.email.data)
-	# 	if username_test == None and email_test == None:
-	# 		updated_user.save() # does this create new or update??
-	# 		flash('Data saved', 'success')
-	# 	else:
-	# 		flash('Duplication of either username or email', 'warning')
 """
 End of Update User
 """

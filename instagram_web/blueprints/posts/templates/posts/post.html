@@ -3,9 +3,8 @@
 {% block content %}
 
 <div class="card">
-	<img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}"
-		alt="">
-	<img class="card-img-top" src="../../../../static/image/saint_petersburg.jpg" alt="Saint Petersburg">
+	<img class="card-img-top" src="{{ post.picture }}"
+		alt="{{ post.picture }}">
 	<div class="card-body">
 		<div class="d-flex justify-content-start status-container">
 			<div class="status">
@@ -32,12 +31,15 @@
 		{% endif %}
 		<div class="user-details">
 			<div class="d-flex justify-content-between mt-2">
-				<div>{{ post.author.username }}</div>
-				<div>{{ post.date_posted.strftime('%Y-%m-%d ') }}</div>
+				<div>{{ post.user_id.username }}</div>
+				<div>{{ post.updated_at }}</div>
 			</div>
 			<h5>{{ post.title }}</h5>
 			<p>{{ post.content }}</p>
 		</div>
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteModal">
+			Delete
+		</button>
 	</div>
 </div>
 
@@ -53,7 +55,7 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				<form action="{{ url_for('delete_post', post_id=post.id) }}" method="POST">
+				<form action="" method="POST">
 					<input class="btn btn-danger" type="submit" value="Delete">
 				</form>
 			</div>

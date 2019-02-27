@@ -14,3 +14,8 @@ input[type="checkbox"]:checked + label[class^="icon"] {
 .status-container .status:first-of-type {
 	margin-left: 0;
 }
+
+.account-img {
+	width: 125px;
+	height: 125px;
+}

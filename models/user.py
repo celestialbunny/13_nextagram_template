@@ -7,7 +7,7 @@ class User(UserMixin, BaseModel):
 	username = pw.CharField(unique=True, null=False)
 	email = pw.CharField(unique=True, null=False)
 	password = pw.CharField(unique=True, null=False)
-	image_file = pw.CharField(unique=False, null=True, default='default.jpg')
+	image_file = pw.CharField(unique=False, null=True, default='https://celestialbunny-nextagram.s3.amazonaws.com/default.png')
 
 	def validate_username(self, username):
 		user = User.get_or_none(User.username == username)

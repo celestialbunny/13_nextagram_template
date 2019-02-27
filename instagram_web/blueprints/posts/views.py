@@ -64,14 +64,14 @@ def create_post():
 
 @posts_blueprint.route('/post/<int:post_id>')
 def post(post_id):
-	post = Post.query.get_or_404(post_id)
+	post = Post.get_or_none(Post.id == post_id)
 	return render_template('post.html', title=post.title, post=post)
 
 @posts_blueprint.route("/post/<int:post_id>/delete", methods=['POST'])
 @login_required
 def delete_post(post_id):
-	post = Post.query.get_or_404(post_id)
-	if post.author != current_user:
+	post = Post.get_or_none(Post.id == post_id)
+	if post.user_id != current_user.id:
 		abort(403)
 	# How to execute the delete command???
 	flash('Post has been deleted!', 'info')
