@@ -16,7 +16,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from app import app
 
 from instagram_web.util.s3_helper import upload_file_to_s3, random_file_name
-# from instagram_web.util.gateway import gateway
+from instagram_web.util.gateway import gateway
 
 posts_blueprint = Blueprint('posts',
 							__name__,
@@ -86,19 +86,6 @@ def delete_post(post_id):
 """
 Start of the donation section
 """
-def generate_client_token():
-	return gateway.client_token.generate()
-
-def transact(options):
-	return gateway.transaction.sale(options)
-
-def find_transaction(id):
-	return gateway.transaction.find(id)
-
-@posts_blueprint.route('/post/<int:post_id>/donate')
-def view_donation():
-	form = CreateDonateForm()
-	return render_template('create_donation.html', form=form)
 
 
 

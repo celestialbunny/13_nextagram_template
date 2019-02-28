@@ -98,6 +98,7 @@ def register_user():
 			return redirect(url_for('users.display_login'))
 		except IntegrityError:
 			flash('Duplication of either username or email', 'warning')
+	return render_template('register.html', register_form=form)
 """
 End of Register User
 """
@@ -130,8 +131,7 @@ def log_user():
 				flash("Please recheck the password entered", "warning")
 		else:
 			flash("There is no account associated with the particular address", "danger")
-	else:
-		flash("Please recheck the login credentials", "warning")
+	return render_template('login.html', login_form=form)
 """
 End of Login User
 """

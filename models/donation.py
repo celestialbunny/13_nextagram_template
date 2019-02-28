@@ -11,4 +11,4 @@ class Donation(BaseModel):
 	amount = DecimalField(unique=False, null=False)
 
 	def __repr__(self):
-		return f"Donation('{self.donor_id}', '{self.recipient_id}', '{self.post_id}')"
+		return f"Donation('{self.donor_id}', '{self.recipient_id}', '{self.post_id}', {self.amount})"
