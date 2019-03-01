@@ -1,0 +1,25 @@
+<div class="media">
+	<img src="{{ user.image_file }}" alt="User Image" class="rounded-circle account-img">
+	<div class="media-body">
+		<div class="row">
+			<h2 class="account-heading">{{ user.username }}</h2>
+			<p class="text-secondary">{{ user.email }}</p>
+		</div>
+		<div class="row">
+			<div>Posts <small>{{ user.posts.count() }}</small></div>
+			<div>Followers <small>{{ user.followers().count() }}</small></div>
+			<div>Following <small>{{ user.following().count() }}</small></div>
+		</div>
+		<div class="row">
+			<!-- Display the follow and unfollow button -->
+			{% if current_user.is_authenticated %}
+			{% if user != current_user %}
+				{% if not user in current_user.following() %}
+				<a href="{{ url_for('follow', username=user.username) }}" class="small">Follow</a>
+				{% endif %}
+				<a href="{{ url_for('unfollow', username=user.username) }}" class="small">Unfollow</a>
+			{% endif %}
+			{% endif %}
+		</div>
+	</div>
+</div>

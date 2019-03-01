@@ -73,9 +73,9 @@ def index():
 """
 Start of View User Profile
 """
-@users_blueprint.route('/<int:userid>', methods=["GET"])
-def display_user(userid):
-	user = User.get_or_none(User.id == userid)
+@users_blueprint.route('/<int:user_id>', methods=["GET"])
+def display_user(user_id):
+	user = User.get_or_none(User.id == user_id)
 	posts = Post.select().where(Post.user == user)
 	return render_template('user.html', user=user, posts=posts)
 """
@@ -155,8 +155,8 @@ def display_update():
 	form.username.data = current_user.username
 	form.email.data = current_user.email
 	post_count = Post.select().where(Post.user == current_user)
-	followers_count = followers
-	following_count = following
+	followers_count = current_user.followers()
+	following_count = current_user.following()
 	return render_template('update.html', form=form, username=current_user.username, email=current_user.email, post_count=post_count, followers_count=followers_count, following_count=following_count)
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])

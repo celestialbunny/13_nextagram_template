@@ -1,22 +1,8 @@
 {% extends "_layout.html" %}
 {% block content %}
 <div class="content-section">
-	<div class="media">
-		<img src="{{ user.image_file }}" alt="User Image" class="rounded-circle account-img">
-		<div class="media-body">
-			<div class="row">
-				<h2 class="account-heading">{{ user.username }}</h2>
-				<p class="text-secondary">{{ user.email }}</p>
-			</div>
-			<div class="row">
-				<div>Posts <small>{{ post_count }}</small></div>
-				<div>Followers <small>{{ user.followers().count() }}</small></div>
-				<div>Following <small>{{ user.following().count() }}</small></div>
-			</div>
-		</div>
-	</div>
+{% include "user_card.html" %}
 </div>
-
 {% if posts %}
 {% include "display_post.html" %}
 {% else %}

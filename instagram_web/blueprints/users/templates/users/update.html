@@ -9,9 +9,9 @@
 				<p class="text-secondary">{{ current_user.email }}</p>
 			</div>
 			<div class="row">
-				<div>Posts <small>{{ post_count }}</small></div>
-				<div>Followers <small>{{ followers_count }}</small></div>
-				<div>Following <small>{{ following_count }}</small></div>
+				<div>Posts <small>{{ current_user.posts.count() }}</small></div>
+				<div>Followers <small>{{ current_user.followers().count() }}</small></div>
+				<div>Following <small>{{ current_user.following().count() }}</small></div>
 			</div>
 		</div>
 	</div>
