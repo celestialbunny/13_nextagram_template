@@ -58,8 +58,8 @@ class User(UserMixin, BaseModel):
 		return f"Post('{self.username}, '{self.email}', '{self.image_file}')"
 
 class Relationship(BaseModel):
-	from_user = ForeignKeyField(User, backref="relationships")
-	to_user = ForeignKeyField(User, backref="related_to")
+	from_user = ForeignKeyField(User, backref="follower")
+	to_user = ForeignKeyField(User, backref="followee")
 
 	def __repr__(self):
 		return f"('{self.from_user} is following '{self.to_user}')"

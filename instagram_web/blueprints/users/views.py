@@ -73,9 +73,9 @@ def index():
 """
 Start of View User Profile
 """
-@users_blueprint.route('/<int:user_id>', methods=["GET"])
-def display_user(user_id):
-	user = User.get_or_none(User.id == user_id)
+@users_blueprint.route('/<string:username>', methods=["GET"])
+def display_user(username):
+	user = User.get_or_none(User.username == username)
 	posts = Post.select().where(Post.user == user)
 	return render_template('user.html', user=user, posts=posts)
 """
@@ -279,34 +279,40 @@ Following and Unfollow Users
 @login_required
 def follow(username):
 	try:
-		to_user = User.get(User.username**username)
+		from_user=User.select().where(User.username == current_user.username)
+		to_user=User.select().where(User.username == username)
 	except User.DoesNotExist:
 		pass
 	else:
 		try:
-			Relationship.create(
-				from_user=current_user,
-				to_user=to_user
+			new_relationship = Relationship(
+				# from_user=g.user._get_current_object(),
+				from_user=from_user[0].id,
+				to_user=to_user[0].id
 			)
 		except IntegrityError:
 			pass
 		else:
-			flash(f"You're now following {to_user.username}", "success")
-	return redirect(url_for('index', username=to_user.username))
+			new_relationship.save()
+			flash(f"You're now following {to_user[0].username}", "success")
+	return redirect(url_for('users.display_user', username=to_user[0].username))
 
 @users_blueprint.route('/unfollow/<string:username>')
 @login_required
 def unfollow(username):
 	try:
-		to_user = User.get(User.username**username)
+		# to_user = User.get(User.username**username)
+		from_user=User.select().where(User.username == current_user.username)
+		to_user=User.select().where(User.username == username)
+		target = Relationship.select().where(Relationship.from_user == from_user[0].id and Relationship.to_user == to_user[0].id)
+		# breakpoint()
 	except User.DoesNotExist:
+		pass
+	else:
 		try:
-			Relationship.get(
-				from_user=current_user,
-				to_user=to_user
-			).delete_instance()
+			target[0].delete_instance()
 		except IntegrityError:
 			pass
 		else:
-			flash(f"You have now unfollowed {to_user.username}", "warning")
-	return redirect(url_for('index', username=to_user.username))
+			flash(f"You have now unfollowed {to_user[0].username}", "warning")
+	return redirect(url_for('users.display_user', username=to_user[0].username))
