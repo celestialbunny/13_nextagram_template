@@ -1,13 +1,14 @@
 import flask
-from flask import Blueprint
+from flask import Blueprint, g
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
-from peewee import IntegrityError
+from peewee import IntegrityError, Model
 from PIL import Image
 
 # importing related to User & it's forms
-from models.user import User
+from models.user import User, Relationship
 from models.post import Post
+# from models.relationship import Relationship
 from instagram_web.blueprints.users.forms import RegistrationForm, LoginForm, UpdateDetailsForm
 
 # Common import that shares with the posts.py
@@ -75,7 +76,8 @@ Start of View User Profile
 @users_blueprint.route('/<int:userid>', methods=["GET"])
 def display_user(userid):
 	user = User.get_or_none(User.id == userid)
-	return render_template('user.html', user=user)
+	posts = Post.select().where(Post.user == user)
+	return render_template('user.html', user=user, posts=posts)
 """
 End of View User Profile
 """
@@ -152,7 +154,10 @@ def display_update():
 	form = UpdateDetailsForm()
 	form.username.data = current_user.username
 	form.email.data = current_user.email
-	return render_template('update.html', form=form, username=current_user.username, email=current_user.email)
+	post_count = Post.select().where(Post.user == current_user)
+	followers_count = followers
+	following_count = following
+	return render_template('update.html', form=form, username=current_user.username, email=current_user.email, post_count=post_count, followers_count=followers_count, following_count=following_count)
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 def allowed_file(filename):
@@ -217,6 +222,7 @@ def logout():
 """
 Google Auth
 """
+
 ACCESS_TOKEN_URI = 'https://www.googleapis.com/oauth2/v4/token'
 AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&prompt=consent'
 
@@ -265,3 +271,42 @@ def store_user_info():
 	# How to save the user credentials inside the database?
 	credentials = storage.get()
 	# What is the purpose of the line above?? For login?
+
+"""
+Following and Unfollow Users
+"""
+@users_blueprint.route('/follow/<string:username>')
+@login_required
+def follow(username):
+	try:
+		to_user = User.get(User.username**username)
+	except User.DoesNotExist:
+		pass
+	else:
+		try:
+			Relationship.create(
+				from_user=current_user,
+				to_user=to_user
+			)
+		except IntegrityError:
+			pass
+		else:
+			flash(f"You're now following {to_user.username}", "success")
+	return redirect(url_for('index', username=to_user.username))
+
+@users_blueprint.route('/unfollow/<string:username>')
+@login_required
+def unfollow(username):
+	try:
+		to_user = User.get(User.username**username)
+	except User.DoesNotExist:
+		try:
+			Relationship.get(
+				from_user=current_user,
+				to_user=to_user
+			).delete_instance()
+		except IntegrityError:
+			pass
+		else:
+			flash(f"You have now unfollowed {to_user.username}", "warning")
+	return redirect(url_for('index', username=to_user.username))

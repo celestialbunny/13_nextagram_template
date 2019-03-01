@@ -46,7 +46,6 @@ def create_post():
 	if file and allowed_file(file.filename):
 		file.filename = secure_filename(file.filename)
 		output = upload_file_to_s3(file, app.config['S3_BUCKET'])
-		flash('Data saved', 'success')
 		# Break here
 		if form.validate_on_submit():
 			try:

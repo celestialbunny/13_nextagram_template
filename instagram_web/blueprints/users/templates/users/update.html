@@ -4,8 +4,15 @@
 	<div class="media">
 		<img src="{{ current_user.image_file }}" alt="User Image" class="rounded-circle account-img">
 		<div class="media-body">
-			<h2 class="account-heading">{{ current_user.username }}</h2>
-			<p class="text-secondary">{{ current_user.email }}</p>
+			<div class="row">
+				<h2 class="account-heading">{{ current_user.username }}</h2>
+				<p class="text-secondary">{{ current_user.email }}</p>
+			</div>
+			<div class="row">
+				<div>Posts <small>{{ post_count }}</small></div>
+				<div>Followers <small>{{ followers_count }}</small></div>
+				<div>Following <small>{{ following_count }}</small></div>
+			</div>
 		</div>
 	</div>
 	<form method="POST" action="" enctype="multipart/form-data">

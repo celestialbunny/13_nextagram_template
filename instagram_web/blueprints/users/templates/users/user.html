@@ -1,7 +1,26 @@
-{% include "_layout.html" %}
+{% extends "_layout.html" %}
+{% block content %}
+<div class="content-section">
+	<div class="media">
+		<img src="{{ user.image_file }}" alt="User Image" class="rounded-circle account-img">
+		<div class="media-body">
+			<div class="row">
+				<h2 class="account-heading">{{ user.username }}</h2>
+				<p class="text-secondary">{{ user.email }}</p>
+			</div>
+			<div class="row">
+				<div>Posts <small>{{ post_count }}</small></div>
+				<div>Followers <small>{{ user.followers().count() }}</small></div>
+				<div>Following <small>{{ user.following().count() }}</small></div>
+			</div>
+		</div>
+	</div>
+</div>
 
-<h2>{{ user.username }}</h2>
-<h2>{{ user.email }}</h2>
+{% if posts %}
+{% include "display_post.html" %}
+{% else %}
+<h3 class="text-center">No posts</h3>
+{% endif %}
 
-<button>Follow</button>
-<button>Unfollow</button>
+{% endblock %}
