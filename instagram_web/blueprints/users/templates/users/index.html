@@ -1,11 +1,11 @@
 {% include "_layout.html" %}
 
 {% if current_user.is_anonymous %}
-{% include "welcome.html" %}
+    {% include "welcome.html" %}
 {% else %}
-{% if posts %}
-{% include "display_post.html" %}
-{% else %}
-<h5>No posts</h5>
-{% endif %}
+    {% if posts %}
+        {% include "display_post.html" %}
+    {% else %}
+        <h5>No posts</h5>
+    {% endif %}
 {% endif %}

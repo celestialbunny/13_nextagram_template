@@ -8,7 +8,7 @@ class User(UserMixin, BaseModel):
 	email = CharField(unique=True, null=False)
 	password = CharField(unique=True, null=False)
 	image_file = CharField(unique=False, null=True, default='https://celestialbunny-nextagram.s3.amazonaws.com/default.png')
-	is_private = BooleanField(unique=False, null=False, default=False)
+	is_public = BooleanField(unique=False, null=False, default=True)
 
 	def validate_username(self, username):
 		user = User.get_or_none(User.username == username)
@@ -43,12 +43,12 @@ class User(UserMixin, BaseModel):
 	# 	)
 
 	def following(self):
-		"""The users that the user is following"""
+		"""The users that the user is following with approval 'True'"""
 		return (
 			User.select().join(
 				Relationship, on=Relationship.to_user
 			).where(
-				# Relationship.from_user_id == self.id &
+				# Relationship.from_user == self and
 				Relationship.approval == True
 			)
 		)
@@ -63,26 +63,13 @@ class User(UserMixin, BaseModel):
 			)
 		)
 
-	"""
-	In order to get the posts not from yourself but from others
-	refer to
-
-	def get_num_followers
-	runs a query whether this user exists
-		true:
-		false:
-
-	OR
-
-	create a list to run through
-	"""
-
 	def __repr__(self):
-		return f"Post('{self.username}, '{self.email}', '{self.image_file}')"
+		return f"Post('{self.username}, '{self.email}', '{self.image_file}', '{self.is_public}')"
 
-class Relationship(BaseModel):
+class Relationship(Model):
 	from_user = ForeignKeyField(User, backref="follower")
 	to_user = ForeignKeyField(User, backref="followee")
+	# approval = BooleanField(unique=False, null=False)
 	approval = BooleanField(unique=False, null=False, default=False)
 
 	def to_user_allow_follow(self):

@@ -17,7 +17,8 @@
             <th scope="row">{{ loop.index }}</th>
             <td><a href="{{ url_for('users.display_user', username=requester.username) }}">{{ requester.username }}</a></td>
             <td>
-                <form action="{{ url_for('users.approve_request', approval=requester.id) }}" method="POST">
+                <form action="{{ url_for('users.approve_request', approval=current_user.id) }}" method="POST">
+                    <h2>{{ current_user.username }}</h2>
                     <input type="submit" class="btn btn-success" value="Approve">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 </form>
