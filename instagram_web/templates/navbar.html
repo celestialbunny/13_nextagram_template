@@ -18,6 +18,9 @@
 			{% else %}
 			<a class="nav-item nav-link" href="{{ url_for('users.display_user', username=current_user['username']) }}">Profile</a>
 			<a class="nav-item nav-link" href="{{ url_for('posts.create_post') }}">Create Post</a>
+			{% if current_user.is_private == True %}
+			<a class="nav-item nav-link" href="{{ url_for('users.view_request') }}">Requests</a>
+			{% endif %}
 			<a class="nav-item nav-link" href="{{ url_for('users.display_update') }}">Update</a>
 			<a class="nav-item nav-link" href="{{ url_for('users.logout') }}">Logout</a>
 			{% endif %}

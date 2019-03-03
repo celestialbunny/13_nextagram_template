@@ -62,12 +62,25 @@ def redirect_if_logged_in():
 """Start of index"""
 @users_blueprint.route('/', methods=["GET"])
 def index():
-	# 1. Search for all posts form current user
-	# 2. Search for all posts from followed user
-	# 3. Display all the posts from both sources, sorted by date desc
-	# Note * Temporarily retrieving from the current user
-	posts = Post.select()
+	"""
+	Need to retrieve the posts where current user is "ALLOWED" to follow
+	1. Select posts whom current user is following
+		a. if followee.is private == True
+		b. Need to ensure Relationship is approved by followee
+	2. Select posts from self
+	"""
+	posts = None
+	if current_user.is_authenticated:
+		try:
+			posts = Post.select().where(
+				(Post.user_id == current_user.following() ) | (Post.user_id == current_user.id)
+			)
+		except:
+			flash("There are no posts to be displayed, start following people", "info")
+		finally:
+			return render_template('index.html', posts=posts)
 	return render_template('index.html', posts=posts)
+
 """End of index"""
 
 """
@@ -190,16 +203,17 @@ def update_user():
 		current_user.image_file = output
 		# current_user.save()
 		try:
-			updated_user = User(
+			updated_user = User.update(
 				username=form.username.data,
 				email=form.email.data,
 				password=generate_password_hash(form.password.data),
-				picture=output
-			)
+				image_file=output,
+				is_private=form.is_private.data
+			).where(User == current_user)
 		except IntegrityError:
 			flash('Duplication of either username or email', 'warning')
 		else:
-			updated_user.save() # does this create new or update??
+			updated_user.execute() # does this create new or update??
 			flash('Data saved', 'success')
 			# if username_test == None and email_test == None:
 			# else:
@@ -316,3 +330,24 @@ def unfollow(username):
 		else:
 			flash(f"You have now unfollowed {to_user[0].username}", "warning")
 	return redirect(url_for('users.display_user', username=to_user[0].username))
+
+@users_blueprint.route('/requests', methods=['GET'])
+@login_required
+def view_request():
+	requests = User.select(User.username).join(Relationship, on=Relationship.from_user_id).where(Relationship.approval == False)
+	# requests = Relationship.select(Relationship.from_user_id).where(Relationship.approval == False)
+	return render_template('follower_request.html', requests=requests)
+
+# need to perform POST for allow request
+@users_blueprint.route('/requests', methods=['POST'])
+@login_required
+def approve_request(approval):
+	breakpoint()
+	try:
+		allow = Relationship.select(Relationship.approval).where(Relationship.from_user_id == approval & Relationship.to_user_id == current_user.id)
+		breakpoint()
+	except:
+		flash("Follower approval failed, please try again", "danger")
+	else:
+		allow.update(True)
+	return redirect(url_for('users.view_request'))

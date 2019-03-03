@@ -1,0 +1,29 @@
+{% extends "_layout.html" %}
+
+{% block content %}
+{% include "current_user_card.html" %}
+<legend>Follower Request</legend>
+<table class="table table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">From</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody class="table-striped">
+        {% for requester in requests %}
+        <tr>
+            <th scope="row">{{ loop.index }}</th>
+            <td><a href="{{ url_for('users.display_user', username=requester.username) }}">{{ requester.username }}</a></td>
+            <td>
+                <form action="{{ url_for('users.approve_request', approval=requester.id) }}" method="POST">
+                    <input type="submit" class="btn btn-success" value="Approve">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -73,4 +73,5 @@ class UpdateDetailsForm(FlaskForm):
 			FileAllowed(['jpg', 'png'])
 		]
 	)
+	is_private = BooleanField('Enable Private Account')
 	submit = SubmitField('Update Profile')

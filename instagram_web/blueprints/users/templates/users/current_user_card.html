@@ -1,0 +1,14 @@
+<div class="media">
+    <img src="{{ current_user.image_file }}" alt="User Image" class="rounded-circle account-img">
+    <div class="media-body">
+        <h2 class="account-heading">{{ current_user.username }}</h2>
+        <p class="text-secondary">{{ current_user.email }}</p>
+        <div class="container">
+            <div class="row">
+                <div>Posts <small>{{ current_user.posts.count() }}</small></div>
+                <div>Followers <small>{{ current_user.followers().count() }}</small></div>
+                <div>Following <small>{{ current_user.following().count() }}</small></div>
+            </div>
+        </div>
+    </div>
+</div>

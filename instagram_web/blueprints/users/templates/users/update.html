@@ -1,20 +1,7 @@
 {% extends "_layout.html" %}
 {% block content %}
 <div class="content-section">
-	<div class="media">
-		<img src="{{ current_user.image_file }}" alt="User Image" class="rounded-circle account-img">
-		<div class="media-body">
-			<div class="row">
-				<h2 class="account-heading">{{ current_user.username }}</h2>
-				<p class="text-secondary">{{ current_user.email }}</p>
-			</div>
-			<div class="row">
-				<div>Posts <small>{{ current_user.posts.count() }}</small></div>
-				<div>Followers <small>{{ current_user.followers().count() }}</small></div>
-				<div>Following <small>{{ current_user.following().count() }}</small></div>
-			</div>
-		</div>
-	</div>
+	{% include "current_user_card.html" %}
 	<form method="POST" action="" enctype="multipart/form-data">
 		{{ form.csrf_token }}
 		{{ form.hidden_tag() }}
@@ -71,6 +58,21 @@
 				</div>
 				{% else %}
 				{{ form.picture(class="form-control form-control-lg") }}
+				{% endif %}
+			</div>
+			<div class="form-group">
+				{{ form.is_private.label(class="form-control-label") }}
+				{% if form.is_private.errors %}
+				{{ form.is_private(class="form-control form-control-lg is-invalid") }}
+				<div class="invalid-feedback">
+					{% for error in form.is_private.errors %}
+					<span>{{ error }}</span>
+					{% endfor %}
+				</div>
+				{% else %}
+				<div class="checkbox left-checkbox">
+					{{ form.is_private(class="left-checkbox") }}
+				</div>
 				{% endif %}
 			</div>
 		</fieldset>

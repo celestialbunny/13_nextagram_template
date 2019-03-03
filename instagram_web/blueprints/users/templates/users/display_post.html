@@ -28,10 +28,11 @@
 					</div>
 					<h3>{{ post.title }}</h3>
 					<p>{{ post.content }}</p>
+					{% if post.user != current_user %}
 					<form action="{{ url_for('donations.new_donation') }}">
-						<!-- <button>class="btn btn-primary">Donate</button> -->
 						<input type="submit" value="Donate" class="btn btn-primary">
 					</form>
+					{% endif %}
 
 					<script src="https://js.braintreegateway.com/web/dropin/1.16.0/js/dropin.min.js"></script>
 					<script>
