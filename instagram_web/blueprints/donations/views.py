@@ -83,10 +83,12 @@ def create_checkout():
 			new_donation.save()
 			flash('Donation performed', 'success')
 		# End of code
-		return redirect(url_for('show_checkout',transaction_id=result.transaction.id))
+		return redirect(url_for('donations.show_checkout',transaction_id=result.transaction.id))
 	else:
-		for x in result.errors.deep_errors: flash('Error: %s: %s' % (x.code, x.message))
-		return redirect(url_for('new_checkout'))
+		for x in result.errors.deep_errors:
+			flash('Error: %s: %s' % (x.code, x.message))
+		# breakpoint()
+		return redirect(url_for('donations.new_donation'))
 
 # @donations_blueprint.route('<int:post_id>/donate', methods=["POST"])
 # @login_required
