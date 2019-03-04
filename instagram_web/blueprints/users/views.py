@@ -74,7 +74,7 @@ def index():
 		try:
 			posts = Post.select().where(
 				(Post.user_id == current_user.following()) | (Post.user_id == current_user.id)
-			)
+			).order_by(Post.updated_at.desc())
 		except:
 			flash("There are no posts to be displayed, start following people", "info")
 		finally:
