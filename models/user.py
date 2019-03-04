@@ -1,4 +1,4 @@
-from models.base_model import BaseModel
+from models.base_model import BaseModel, db
 from peewee import ForeignKeyField, Model, CharField, IntegrityError, BooleanField
 import datetime
 from flask_login import UserMixin
@@ -71,6 +71,10 @@ class Relationship(Model):
 	to_user = ForeignKeyField(User, backref="followee")
 	# approval = BooleanField(unique=False, null=False)
 	approval = BooleanField(unique=False, null=False, default=False)
+
+	class Meta:
+		database = db
+		legacy_table_names = False
 
 	def to_user_allow_follow(self):
 		pass

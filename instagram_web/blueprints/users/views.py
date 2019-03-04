@@ -290,40 +290,37 @@ def store_user_info():
 """
 Start of Follow and Unfollow Users
 """
-@users_blueprint.route('/follow/<string:username>')
+@users_blueprint.route('/follow/<string:username>', methods=['POST'])
 @login_required
 def follow(username):
 	try:
 		from_user=User.select().where(User.username == current_user.username)
 		to_user=User.select().where(User.username == username)
-		allow_follow=User.select().where(User.username == username)
 	except User.DoesNotExist:
 		pass
 	else:
 		# breakpoint()
 		try:
-			Relationship.create(
-			# new_relationship = Relationship(
-				# from_user=g.user._get_current_object(),
-				from_user=from_user[0].id,
-				to_user=to_user[0].id,
-				approval=allow_follow[0].is_public
+			new_relationship = Relationship.create(
+				from_user_id=from_user[0].id,
+				to_user_id=to_user[0].id,
+				approval=to_user[0].is_public
 			)
 		except IntegrityError:
 			flash("Request has been sent, waiting for approval", "info")
 		else:
-			# new_relationship.save()
+			new_relationship.save()
 			flash(f"You're now following {to_user[0].username}", "success")
-	return redirect(url_for('users.display_user', username=to_user[0].username))
+			return redirect(url_for('users.display_user', username=to_user[0].username))
+	return render_template('user.html')
 
-@users_blueprint.route('/unfollow/<string:username>')
+@users_blueprint.route('/unfollow/<string:username>', methods=['POST'])
 @login_required
 def unfollow(username):
 	try:
-		# to_user = User.get(User.username**username)
 		from_user=User.select().where(User.username == current_user.username)
 		to_user=User.select().where(User.username == username)
-		target = Relationship.select().where(Relationship.from_user == from_user[0].id & Relationship.to_user == to_user[0].id)
+		target = Relationship.select().where(Relationship.from_user == from_user[0].id and Relationship.to_user == to_user[0].id)
 		breakpoint()
 	except User.DoesNotExist:
 		pass

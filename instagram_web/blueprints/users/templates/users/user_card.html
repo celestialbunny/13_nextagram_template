@@ -14,9 +14,15 @@
 				{% if current_user.is_authenticated %}
 					{% if user != current_user %}
 						{% if not user in current_user.following() %}
-							<a href="{{ url_for('users.follow', username=user.username) }}" class="btn btn-primary">Follow</a>
+							<form action="{{ url_for('users.follow', username=user.username) }}" method="POST">
+								<input type="submit" class="btn btn-success" value="Follow">
+								<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+							</form>
 						{% else %}
-							<a href="{{ url_for('users.unfollow', username=user.username) }}" class="btn btn-secondary">Unfollow</a>
+							<form action="{{ url_for('users.unfollow', username=user.username) }}" method="POST">
+								<input type="submit" class="btn btn-secondary" value="Unfollow">
+								<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+							</form>
 						{% endif %}
 					{% endif %}
 				{% endif %}
